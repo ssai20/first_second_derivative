@@ -11,6 +11,8 @@ public class Shagaev_Java_1 {
             if (s>7){
                 System.out.println("Привет!");
             }
+        } catch (IOException e) {
+            e.printStackTrace();
         }
     }
 }
