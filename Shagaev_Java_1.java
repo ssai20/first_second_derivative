@@ -1,3 +1,5 @@
+//Составить алгоритм: если введенное число больше 7, то вывести “Привет”
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
