@@ -3,6 +3,48 @@ import java.nio.file.Files;
 import java.nio.file.Path;
 import java.util.*;
 
+enum CodeError
+{
+    WRONG_CONSOLE_CONDITIONS("Введите, пожалуйста, данные по порядку: (вид сортировки) (тип сортируемых данных) (путь к исходящему файлу в формате txt) (пути ко входящим файлам в форматах txt)."),
+    EMPTY_FIELD_TYPE("Введите, пожалуйста, тип сортируемых данных в формате '-i' или '-s'!"),
+    FILE_ERROR("Извините, файла %s не существует, либо указан неверный путь."),
+    EMPTY_FILE("Введите пути к файлам!"),
+    WRONG_TYPE_INTEGER("Вы ввели '-i' в консоль, но %s строка в файле %s не типа Integer, либо число выходит за рамки диапазона Integer"), //Минимальное значение числа типа int: -2 147 483 648, максимальное значение: 2 147 483 647
+    WRONG_SPACE("В строках файла не могут быть пробелы, но %s строка в файле %s имеет пробел");
+
+    private String errorString;
+    CodeError(String error) {
+        this.errorString = error;
+    }
+
+    public String getErrorString() {
+        return errorString;
+    }
+
+}
+
+
+class CodeException extends Exception
+{
+    private CodeError codeError;
+    public CodeException (CodeError codeError)
+    {
+        super(codeError.getErrorString());
+    }
+    public CodeException (CodeError codeError, String param)
+    {
+        super (String.format(codeError.getErrorString(),param));
+    }
+
+    public CodeException (CodeError codeError, String param1, String param2)
+    {
+        super (String.format(codeError.getErrorString(),param1, param2));
+    }
+
+    public CodeError getCodeError() {
+        return codeError;
+    }
+}
 
 class GenericTypes<T extends Comparable<T>> implements Comparable<T>{
     public T a;
@@ -174,7 +216,6 @@ class GenericTypes<T extends Comparable<T>> implements Comparable<T>{
     }
 
     public void mapListToFile (String fileOutPath, List<T> resultList) throws CodeException {
-//        if (!Files.exists(Path.of(fileOutPath))) throw new CodeException(CodeError.FILE_ERROR, fileOutPath);
         File file = new File(fileOutPath);
         try (BufferedWriter bw = new BufferedWriter(new OutputStreamWriter(new FileOutputStream(file),  "UTF-8"))){
             for (int i=0;i<resultList.size();i++) {
@@ -279,78 +320,7 @@ public class SortIt{
         }
     }
 }
-//-d -i /Users/work/Desktop/out.txt /Users/work/Desktop/in1.txt /Users/work/Desktop/in2.txt /Users/work/Desktop/out4.txt
 
-enum CodeError
-{
-    WRONG_CONSOLE_CONDITIONS("Введите, пожалуйста, данные по порядку: (вид сортировки) (тип сортируемых данных) (путь к исходящему файлу в формате txt) (пути ко входящим файлам в форматах txt)."),
-    EMPTY_FIELD_TYPE("Введите, пожалуйста, тип сортируемых данных в формате '-i' или '-s'!"),
-    FILE_ERROR("Извините, файла %s не существует, либо указан неверный путь."),
-    EMPTY_FILE("Введите пути к файлам!"),
-    WRONG_TYPE_INTEGER("Вы ввели '-i' в консоль, но %s строка в файле %s не типа Integer, либо число выходит за рамки диапазона Integer"), //Минимальное значение числа типа int: -2 147 483 648, максимальное значение: 2 147 483 647
-    WRONG_SPACE("В строках файла не могут быть пробелы, но %s строка в файле %s имеет пробел");
-
-    private String errorString;
-    CodeError(String error) {
-        this.errorString = error;
-    }
-
-    public String getErrorString() {
-        return errorString;
-    }
-
-}
-
-
-class CodeException extends Exception
-{
-    private CodeError codeError;
-    public CodeException (CodeError codeError)
-    {
-        super(codeError.getErrorString());
-    }
-    public CodeException (CodeError codeError, String param)
-    {
-        super (String.format(codeError.getErrorString(),param));
-    }
-
-    public CodeException (CodeError codeError, String param1, String param2)
-    {
-        super (String.format(codeError.getErrorString(),param1, param2));
-    }
-
-    public CodeError getCodeError() {
-        return codeError;
-    }
-}
-
-//
-//class ServerResponse {
-//    private int responseCode;
-//    private String responseData;
-//
-//    public ServerResponse(int responseCode, String responseData) throws CodeException
-//    {
-//        this.responseCode = responseCode;
-//        this.responseData = responseData;
-//    }
-//
-//    public int getResponseCode()
-//    {
-//        return responseCode;
-//    }
-//    public String getResponseData()
-//    {
-//        return responseData;
-//    }
-//
-//    public void setResponseCode(int responseCode, String responseData) throws CodeException
-//    {
-//        this.responseCode = responseCode;
-//        this.responseData = responseData;
-//    }
-//   -d -i /Users/work/Desktop/out.txt /Users/work/Desktop/in1.txt /Users/work/Desktop/in2.txt /Users/work/Desktop/in1.txt /Users/work/Desktop/in2.txt /Users/work/Desktop/in1.txt /Users/work/Desktop/in3.txt
-//}
 
 //-d -i /Users/work/Desktop/out.txt /Users/work/Desktop/in1.txt /Users/work/Desktop/in2.txt
 
