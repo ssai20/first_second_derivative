@@ -314,6 +314,3 @@ public class SortIt{
         }
     }
 }
-
-
-//-d -i /Users/work/Desktop/out.txt /Users/work/Desktop/in1.txt /Users/work/Desktop/in2.txt /Users/work/Desktop/in1.txt
