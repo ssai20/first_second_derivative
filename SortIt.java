@@ -5,12 +5,10 @@ import java.util.*;
 
 enum CodeError
 {
-    WRONG_CONSOLE_CONDITIONS("Введите, пожалуйста, данные по порядку: (вид сортировки) (тип сортируемых данных) (путь к исходящему файлу в формате txt) (пути ко входящим файлам в форматах txt)."),
+    WRONG_CONSOLE_CONDITIONS("Введите, пожалуйста, данные по порядку: (вид сортировки) (тип сортируемых данных) (путь к исходящему файлу) (пути ко входящим файлам)."),
     EMPTY_FIELD_TYPE("Введите, пожалуйста, тип сортируемых данных в формате '-i' или '-s'!"),
     FILE_ERROR("Извините, файла %s не существует, либо указан неверный путь."),
-    EMPTY_FILE("Введите пути к файлам!"),
-    WRONG_TYPE_INTEGER("Вы ввели '-i' в консоль, но %s строка в файле %s не типа Integer, либо число выходит за рамки диапазона Integer"), //Минимальное значение числа типа int: -2 147 483 648, максимальное значение: 2 147 483 647
-    WRONG_SPACE("В строках файла не могут быть пробелы, но %s строка в файле %s имеет пробел");
+    EMPTY_FILE("Введите пути к файлам!");
 
     private String errorString;
     CodeError(String error) {
@@ -76,9 +74,7 @@ class GenericTypes<T extends Comparable<T>> implements Comparable<T>{
             }
     }
 
-
     public List<T> genericMergeSortAlgorithm(List<T> listFile1, List<T> listFile2) {
-
         if (!isListConsistence(listFile1)){
             List<T> deepList1 = new ArrayList<T>();
             List<T> deepList2 = new ArrayList<T>();
@@ -146,7 +142,6 @@ class GenericTypes<T extends Comparable<T>> implements Comparable<T>{
                     if (queueFile2.peek().compareTo(buffer) < 0) {
                         listResult.add(queueFile2.peek());
                         queueFile2.poll();
-                        bufferInRightColumn = false;
                     } else if (queueFile2.peek().compareTo(buffer) >= 0){
                         listResult.add(buffer);
                         buffer = queueFile2.peek();
@@ -181,7 +176,6 @@ class GenericTypes<T extends Comparable<T>> implements Comparable<T>{
         File file = new File(fileInPath);
         List<T> listFile = new ArrayList<>();
         try (BufferedReader br = new BufferedReader(new InputStreamReader(new FileInputStream(file), "UTF-8"))) {
-
                 int stringNumber = 0;
                 while (true) {
                     stringNumber++;
@@ -191,17 +185,22 @@ class GenericTypes<T extends Comparable<T>> implements Comparable<T>{
                     }
 
 
-                    if (string.contains(" "))
-                        throw new CodeException(CodeError.WRONG_SPACE, String.valueOf(stringNumber), file.toString());
-                    if (dataType.equals("-i")) {
-                        if (!isNumeric(string))
-                            throw new CodeException(CodeError.WRONG_TYPE_INTEGER, String.valueOf(stringNumber), file.toString());
-                        Integer i = Integer.parseInt(string);
-                        listFile.add((T) i);
-                    }
+                    if (string.contains(" ")) {
+                        System.out.println("В строках файла не могут быть пробелы, но " + String.valueOf(stringNumber) + " строка в файле " + file.toString() + " имеет пробел.\nСортировка будет продолжена без учета этой строки");
+                    } else {
+//                        throw new CodeException(CodeError.WRONG_SPACE, String.valueOf(stringNumber), file.toString());
+                        if (dataType.equals("-i")) {
+                            if (!isNumeric(string)) {
+                                System.out.println("Вы ввели '-i' в консоль, но " + String.valueOf(stringNumber) + " строка в файле " + file.toString() + " не типа Integer, либо число выходит за рамки диапазона Integer.\nСортировка будет продолжена без учета этой строки");
+                            } else {
+                                Integer i = Integer.parseInt(string);
+                                listFile.add((T) i);
+                            }
+                        }
 
-                    if (dataType.equals("-s")) {
-                        listFile.add((T) string);
+                        if (dataType.equals("-s")) {
+                            listFile.add((T) string);
+                        }
                     }
                 }
             } catch (IOException e1) {
@@ -241,63 +240,60 @@ class GenericTypes<T extends Comparable<T>> implements Comparable<T>{
 }
 
 
-
-
 public class SortIt{
     public static void mergeSort(String conditions) throws CodeException {
         try {
-
-        String[] s = conditions.split(" ");
-        if (!s[0].equals("-a") && !s[0].equals("-d")) {
-            StringBuilder conditionsSB = new StringBuilder(conditions);
-            conditionsSB.insert(0, "-a ");
-            conditions = conditionsSB.toString();
-        }
-        List<String> conditionList = List.of(conditions.split(" "));
-        if ((!conditionList.get(1).equals("-s")) && (!conditionList.get(1).equals("-i"))) throw new CodeException(CodeError.EMPTY_FIELD_TYPE);
-        if ((conditionList.size()==2)) throw new CodeException(CodeError.EMPTY_FIELD_TYPE);
-        if (!Files.exists(Path.of(conditionList.get(2)))) throw new CodeException(CodeError.FILE_ERROR, conditionList.get(2));
-
-        String sortType = conditionList.get(0);
-        String dataType = conditionList.get(1);
-        String fileOutPath = conditionList.get(2);
-
-
-        if (dataType.equals("-i")) {
-            GenericTypes<Integer> genericTypes = new GenericTypes<>();
-            List<Integer> resultList = new ArrayList<>();
-
-            for (int i = 3; i < conditionList.size(); i++) {
-                resultList = genericTypes.genericMergeSortAlgorithm(resultList, genericTypes.mapFileToList(conditionList.get(i), dataType));
+            String[] s = conditions.split(" ");
+            if (!s[0].equals("-a") && !s[0].equals("-d")) {
+                StringBuilder conditionsSB = new StringBuilder(conditions);
+                conditionsSB.insert(0, "-a ");
+                conditions = conditionsSB.toString();
             }
-            if (sortType.equals("-a")) {
-                genericTypes.mapListToFile(fileOutPath, resultList);
-                genericTypes.successFinish(resultList);
-            }
-            if (sortType.equals("-d")) {
-                genericTypes.successFinish(resultList);
-                Collections.reverse(resultList);
-                genericTypes.mapListToFile(fileOutPath, resultList);
-            }
-        }
+            List<String> conditionList = List.of(conditions.split(" "));
+            if ((!conditionList.get(1).equals("-s")) && (!conditionList.get(1).equals("-i"))) throw new CodeException(CodeError.EMPTY_FIELD_TYPE);
+            if ((conditionList.size()==2)||(conditionList.size()==3)) throw new CodeException(CodeError.EMPTY_FILE);
+            if (!Files.exists(Path.of(conditionList.get(2)))) throw new CodeException(CodeError.FILE_ERROR, conditionList.get(2));
 
-        if (dataType.equals("-s")) {
-            GenericTypes<String> genericTypes = new GenericTypes<>();
-            List<String> resultList = new ArrayList<>();
-            for (int i = 3; i < conditionList.size(); i++) {
-                resultList = genericTypes.genericMergeSortAlgorithm(resultList, genericTypes.mapFileToList(conditionList.get(i), dataType));
+            String sortType = conditionList.get(0);
+            String dataType = conditionList.get(1);
+            String fileOutPath = conditionList.get(2);
+
+
+            if (dataType.equals("-i")) {
+                GenericTypes<Integer> genericTypes = new GenericTypes<>();
+                List<Integer> resultList = new ArrayList<>();
+
+                for (int i = 3; i < conditionList.size(); i++) {
+                    resultList = genericTypes.genericMergeSortAlgorithm(resultList, genericTypes.mapFileToList(conditionList.get(i), dataType));
+                }
+                if (sortType.equals("-a")) {
+                    genericTypes.mapListToFile(fileOutPath, resultList);
+                    genericTypes.successFinish(resultList);
+                }
+                if (sortType.equals("-d")) {
+                    genericTypes.successFinish(resultList);
+                    Collections.reverse(resultList);
+                    genericTypes.mapListToFile(fileOutPath, resultList);
+                }
             }
-            if (sortType.equals("-a")) {
-                genericTypes.mapListToFile(fileOutPath, resultList);
-                genericTypes.successFinish(resultList);
+
+            if (dataType.equals("-s")) {
+                GenericTypes<String> genericTypes = new GenericTypes<>();
+                List<String> resultList = new ArrayList<>();
+                for (int i = 3; i < conditionList.size(); i++) {
+                    resultList = genericTypes.genericMergeSortAlgorithm(resultList, genericTypes.mapFileToList(conditionList.get(i), dataType));
+                }
+                if (sortType.equals("-a")) {
+                    genericTypes.mapListToFile(fileOutPath, resultList);
+                    genericTypes.successFinish(resultList);
+                }
+                if (sortType.equals("-d")) {
+                    genericTypes.successFinish(resultList);
+                    Collections.reverse(resultList);
+                    genericTypes.mapListToFile(fileOutPath, resultList);
+                }
             }
-            if (sortType.equals("-d")) {
-                genericTypes.successFinish(resultList);
-                Collections.reverse(resultList);
-                genericTypes.mapListToFile(fileOutPath, resultList);
-            }
-        }
-    } catch (CodeException c){
+        } catch (CodeException c){
         System.out.println(c.getMessage());
     }
 
@@ -322,7 +318,7 @@ public class SortIt{
 }
 
 
-//-d -i /Users/work/Desktop/out.txt /Users/work/Desktop/in1.txt /Users/work/Desktop/in2.txt
+//-d -i /Users/work/Desktop/out.txt /Users/work/Desktop/in1.txt /Users/work/Desktop/in2.txt /Users/work/Desktop/in1.txt
 
 
 
