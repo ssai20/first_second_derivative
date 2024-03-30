@@ -169,7 +169,6 @@ class GenericTypes<T extends Comparable<T>> implements Comparable<T>{
     }
 
 
-
     public List<T> mapFileToList(String fileInPath, String dataType) throws CodeException {
         if (!Files.exists(Path.of(fileInPath))) throw new CodeException(CodeError.FILE_ERROR, fileInPath);
         File file = new File(fileInPath);
