@@ -29,9 +29,21 @@ public class Z_2 {
             proizvU[i+1] = (U[i] - U[i-1])/hh;
             proizvU[i+2] = (U[i] - U[i-1])/hh;
         }
+        for (int i=2;i<L-2;i=i+4){
+            proizvPogranSloiU[i-2] = (-1./epsilon)*Math.exp(-x[i-2]/epsilon)*(U[i] - U[i-1])/
+                    (Math.exp(-x[i]/epsilon) - Math.exp(-x[i-1]/epsilon));
+            proizvPogranSloiU[i-1] = (-1./epsilon)*Math.exp(-x[i-1]/epsilon)*(U[i] - U[i-1])/
+                    (Math.exp(-x[i]/epsilon) - Math.exp(-x[i-1]/epsilon));
+            proizvPogranSloiU[i] = (-1./epsilon)*Math.exp(-x[i]/epsilon)*(U[i] - U[i-1])/
+                    (Math.exp(-x[i]/epsilon) - Math.exp(-x[i-1]/epsilon));
+            proizvPogranSloiU[i+1] = (-1./epsilon)*Math.exp(-x[i+1]/epsilon)*(U[i] - U[i-1])/
+                    (Math.exp(-x[i]/epsilon) - Math.exp(-x[i-1]/epsilon));
+            proizvPogranSloiU[i+2] = (-1./epsilon)*Math.exp(-x[i+2]/epsilon)*(U[i] - U[i-1])/
+                    (Math.exp(-x[i]/epsilon) - Math.exp(-x[i-1]/epsilon));
+        }
 
         double[] norm = new double[L+1];
-
+/*
         for (int i=2;i<=L-2;i=i+4){
             norm[i-2] = Math.exp((x[i-1]-x[i-2])/epsilon) * (Math.cos(Math.PI*x[i]) - Math.cos(Math.PI*x[i-1]))/(1.-Math.exp(-hh/epsilon)) + epsilon*Math.PI*Math.sin(Math.PI*x[i-2]);
             norm[i-1] = Math.exp((x[i-1]-x[i-1])/epsilon) * (Math.cos(Math.PI*x[i]) - Math.cos(Math.PI*x[i-1]))/(1.-Math.exp(-hh/epsilon)) + epsilon*Math.PI*Math.sin(Math.PI*x[i-1]);
@@ -39,15 +51,15 @@ public class Z_2 {
             norm[i+1] = Math.exp((x[i-1]-x[i+1])/epsilon) * (Math.cos(Math.PI*x[i]) - Math.cos(Math.PI*x[i-1]))/(1.-Math.exp(-hh/epsilon)) + epsilon*Math.PI*Math.sin(Math.PI*x[i+1]);
             norm[i+2] = Math.exp((x[i-1]-x[i+2])/epsilon) * (Math.cos(Math.PI*x[i]) - Math.cos(Math.PI*x[i-1]))/(1.-Math.exp(-hh/epsilon)) + epsilon*Math.PI*Math.sin(Math.PI*x[i+2]);
         }
-
+*/
 
         double maxNorm = 0;
 
         for (int i=0;i<=L;i++){
 //            norm[i] = epsilon*Math.abs(proizvU[i]-(-Math.PI*Math.sin(Math.PI*x[i]) - Math.exp(-x[i]/epsilon)/epsilon));
 
-            /*norm[i] = epsilon*Math.abs(proizvPogranSloiU[i] -
-                    (-Math.PI*Math.sin(Math.PI*x[i]) - Math.exp(-x[i]/epsilon)/epsilon));*/
+            norm[i] = epsilon*Math.abs(proizvPogranSloiU[i] -
+                    (-Math.PI*Math.sin(Math.PI*x[i]) - Math.exp(-x[i]/epsilon)/epsilon));
         }
 
         for(int i=0;i<=L;i++){
@@ -168,12 +180,27 @@ public class Z_2 {
 
         double maxNorm = 0;
         double[] norm = new double[L+1];
+        /*
         for (int i=0;i<=L;i++){
 //            norm[i] = epsilon*epsilon*Math.abs(secondProizvPogranSloiU[i] - (-Math.PI*Math.PI*Math.cos(Math.PI*x[i]) +
 //                    + Math.exp(-x[i]/epsilon)/(epsilon*epsilon)));
             norm[i] = epsilon*epsilon*Math.abs(secondProizvU[i] - (-Math.PI*Math.PI*Math.cos(Math.PI*x[i]) +
                     + Math.exp(-x[i]/epsilon)/(epsilon*epsilon)));
 
+        }
+        */
+
+        for (int i=2;i<=L-2;i=i+4){
+            norm[i-2] = Math.exp((x[i-1]-x[i-2])/epsilon) * (Math.cos(Math.PI*x[i-1])-2.*Math.cos(Math.PI*x[i])+Math.cos(Math.PI*x[i+1]))/(1.-2.*Math.exp(-hh/epsilon)+Math.exp(-2. * hh/epsilon)) +
+                    epsilon*epsilon*Math.PI*Math.PI*Math.cos(Math.PI*x[i-2]);
+            norm[i-1] = Math.exp((x[i-1]-x[i-1])/epsilon) * (Math.cos(Math.PI*x[i-1])-2.*Math.cos(Math.PI*x[i])+Math.cos(Math.PI*x[i+1]))/(1.-2.*Math.exp(-hh/epsilon)+Math.exp(-2. * hh/epsilon)) +
+                    epsilon*epsilon*Math.PI*Math.PI*Math.cos(Math.PI*x[i-1]);
+            norm[i] = Math.exp((x[i-1]-x[i])/epsilon) * (Math.cos(Math.PI*x[i-1])-2.*Math.cos(Math.PI*x[i])+Math.cos(Math.PI*x[i+1]))/(1.-2.*Math.exp(-hh/epsilon)+Math.exp(-2. * hh/epsilon)) +
+                    epsilon*epsilon*Math.PI*Math.PI*Math.cos(Math.PI*x[i]);
+            norm[i+1] = Math.exp((x[i-1]-x[i+1])/epsilon) * (Math.cos(Math.PI*x[i-1])-2.*Math.cos(Math.PI*x[i])+Math.cos(Math.PI*x[i+1]))/(1.-2.*Math.exp(-hh/epsilon)+Math.exp(-2. * hh/epsilon)) +
+                    epsilon*epsilon*Math.PI*Math.PI*Math.cos(Math.PI*x[i+1]);
+            norm[i+2] = Math.exp((x[i-1]-x[i+2])/epsilon) * (Math.cos(Math.PI*x[i-1])-2.*Math.cos(Math.PI*x[i])+Math.cos(Math.PI*x[i+1]))/(1.-2.*Math.exp(-hh/epsilon)+Math.exp(-2. * hh/epsilon)) +
+                    epsilon*epsilon*Math.PI*Math.PI*Math.cos(Math.PI*x[i+2]);
         }
 
         for(int i=0;i<=L;i++){
@@ -237,9 +264,9 @@ public class Z_2 {
     public static void main(String[] args) {
         double a = 0.;
         double epsilon = 1./512.;
-        for (int i=16;i<=1024;i=2*i){
+        for (int i=32;i<=1024;i=2*i){
 //            System.out.println(findU(i, 1.));
-            double b = findUexp(i, epsilon);
+            double b = findSecondUexp(i, epsilon);
             double four = a/b;
             a = b;
             System.out.println("epsilon = 1/"+1./epsilon);
